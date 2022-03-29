@@ -1,8 +1,8 @@
-const express = require('express')
-const router = express.Router()
-const { getMoney, updateMoney } = require('../controllers/moneyController')
+const express = require("express");
+const router = express.Router();
+const { getMoney, updateMoney } = require("../controllers/moneyController");
 
-router.get('/', getMoney)
-router.put('/:id', updateMoney)
+router.get("/", getMoney);
+router.put("/:id", updateMoney);
 
-module.exports = router
+module.exports = router;

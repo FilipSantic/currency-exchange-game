@@ -1,19 +1,23 @@
-const express = require('express')
-const dotenv = require('dotenv').config()
-const { errorHandler } = require('./middleware/errorMiddleware')
-const port = process.env.PORT || 5000
+const express = require("express");
+const colors = require("colors");
+const dotenv = require("dotenv").config();
+const { errorHandler } = require("./middleware/errorMiddleware");
+const connectDB = require("./config/db");
+const port = process.env.PORT || 5000;
 
-const app = express()
+connectDB();
+
+const app = express();
 
 // Middleware
-app.use(express.json())
-app.use(express.urlencoded({extended: false}))
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // Routes
-app.use('/api/transactions', require('./routes/transactionRoutes'))
-app.use('/api/money', require('./routes/moneyRoutes'))
+app.use("/api/transactions", require("./routes/transactionRoutes"));
+app.use("/api/money", require("./routes/moneyRoutes"));
 
 // JSON error handler
-app.use(errorHandler)
+app.use(errorHandler);
 
-app.listen(port, () => console.log(`Server started on port ${port}`))
+app.listen(port, () => console.log(`Server started on port ${port}`.yellow));
