@@ -30,9 +30,9 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const money = await Money.create({
     user: user,
-    money_eur: 0,
-    money_usd: 0,
-    money_hrk: 0,
+    eur: 0,
+    usd: 0,
+    hrk: 0,
   })
 
   if(user && money) {
@@ -40,9 +40,9 @@ const registerUser = asyncHandler(async (req, res) => {
       _id: user.id,
       name: user.name,
       email: user.email,
-      money_eur: money.money_eur,
-      money_usd: money.money_usd,
-      money_hrk: money.money_hrk,
+      eur: money.eur,
+      usd: money.usd,
+      hrk: money.hrk,
       token: generateToken(user._id),
     });
   } else {
