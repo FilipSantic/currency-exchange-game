@@ -14,8 +14,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Routes
-app.use("/api/transactions", require("./routes/transactionRoutes"));
 app.use("/api/money", require("./routes/moneyRoutes"));
+app.use("/api/transactions", require("./routes/transactionsRoutes"));
+app.use("/api/users", require("./routes/usersRoutes"));
 
 // JSON error handler
 app.use(errorHandler);

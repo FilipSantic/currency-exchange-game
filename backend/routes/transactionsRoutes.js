@@ -5,6 +5,11 @@ const {
   createTransaction,
 } = require("../controllers/transactionsController");
 
-router.route("/").get(getTransactions).post(createTransaction);
+const { protect } = require("../middleware/authMiddleware");
+
+router
+  .route("/")
+  .get(protect, getTransactions)
+  .post(protect, createTransaction);
 
 module.exports = router;
