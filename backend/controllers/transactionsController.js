@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Transactions = require("../models/transactionsModel");
-const { getMoney, updateMoney } = require("../controllers/moneyController");
+const { updateMoney } = require("../controllers/moneyController");
 
 const getTransactions = asyncHandler(async (req, res) => {
   const transactions = await Transactions.find({ user: req.user.id });

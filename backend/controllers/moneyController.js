@@ -1,8 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Money = require("../models/moneyModel");
 
-// Get users money from which to convert from after transaction
-const getMoney = asyncHandler(async (req, res) => {
+const getMoneyFrom = asyncHandler(async (req, res) => {
   const moneyObject = await Money.find({ user: req.user.id });
 
   if (!moneyObject) {
@@ -21,12 +20,17 @@ const getMoney = asyncHandler(async (req, res) => {
 });
 
 const updateMoney = asyncHandler(async (req, res) => {
-  const moneyFromValue = await getMoney(req, res);
-  const moneyFromKey = Object.keys(Money.schema.tree).filter(function(e) {return e === req.body.from});
-  const updatedMoneyFrom = await Money.updateOne({ user: req.user.id }, { $set: { [`${moneyFromKey}`]: moneyFromValue } });
+  const moneyFromValue = await getMoneyFrom(req, res);
+  const moneyFromKey = Object.keys(Money.schema.tree).filter(function (e) {
+    return e === req.body.from;
+  });
+  const updatedMoneyFrom = await Money.updateOne(
+    { user: req.user.id },
+    { $set: { [`${moneyFromKey}`]: moneyFromValue } }
+  );
 });
 
 module.exports = {
-  getMoney,
+  getMoneyFrom,
   updateMoney,
 };

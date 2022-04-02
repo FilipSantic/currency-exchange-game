@@ -12,9 +12,9 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Some of the fields are missing");
   }
 
-  const userExists = await User.findOne({email});
+  const userExists = await User.findOne({ email });
 
-  if(userExists) {
+  if (userExists) {
     res.status(400);
     throw new Error("User already exists");
   }
@@ -26,16 +26,16 @@ const registerUser = asyncHandler(async (req, res) => {
     name: name,
     email: email,
     password: hashedPassword,
-  })
+  });
 
   const money = await Money.create({
     user: user,
     eur: 100,
     usd: 0,
     hrk: 0,
-  })
+  });
 
-  if(user && money) {
+  if (user && money) {
     res.status(201).json({
       _id: user.id,
       name: user.name,
@@ -54,9 +54,9 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({email})
+  const user = await User.findOne({ email });
 
-  if(user && (await bcrypt.compare(password, user.password))) {
+  if (user && (await bcrypt.compare(password, user.password))) {
     res.status(201).json({
       _id: user.id,
       name: user.name,
@@ -75,9 +75,9 @@ const getUserData = asyncHandler(async (req, res) => {
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d',
-  })
-}
+    expiresIn: "30d",
+  });
+};
 
 module.exports = {
   registerUser,
