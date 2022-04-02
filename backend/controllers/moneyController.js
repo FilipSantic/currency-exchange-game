@@ -3,28 +3,27 @@ const Money = require("../models/moneyModel");
 const axios = require("axios");
 
 const updateMoney = asyncHandler(async (req, res) => {
-  const baseCurrencyValue = await getBaseCurrencyValue(req, res);
+  const baseCurrencyValueBefore = await getBaseCurrencyValue(req, res);
+  const baseCurrencyNewValue = baseCurrencyValueBefore - req.body.amount;
   const targetCurrencyValueBefore = await getTargetCurrencyValue(req, res);
-  const targetCurrencyNewValue = await convertCurrencies(req, res);
-  const targetCurrencyValueAfter =
-    targetCurrencyValueBefore + Number(targetCurrencyNewValue);
+  const targetCurrencyValueAfter = await convertCurrencies(req, res);
+  const targetCurrencyNewValue =
+    targetCurrencyValueBefore + Number(targetCurrencyValueAfter);
 
   const baseCurrencyKey = Object.keys(Money.schema.tree).filter(function (key) {
-    return key === req.body.from;
+    return key === req.body.base;
   });
 
-  const targetCurrencyKey = Object.keys(Money.schema.tree).filter(function (
-    key
-  ) {
-    return key === req.body.to;
+  const targetCurrencyKey = Object.keys(Money.schema.tree).filter(function (key) {
+    return key === req.body.target;
   });
 
   const updatedMoney = await Money.updateOne(
     { user: req.user.id },
     {
       $set: {
-        [`${baseCurrencyKey}`]: baseCurrencyValue,
-        [`${targetCurrencyKey}`]: targetCurrencyValueAfter,
+        [`${baseCurrencyKey}`]: baseCurrencyNewValue,
+        [`${targetCurrencyKey}`]: targetCurrencyNewValue,
       },
     }
   );
@@ -43,14 +42,14 @@ const getBaseCurrencyValue = asyncHandler(async (req, res) => {
     throw new Error("Money object was not found");
   }
 
-  const baseCurrencyValue = moneyObject[0][req.body.from];
+  const baseCurrencyValue = moneyObject[0][req.body.base];
 
   if (baseCurrencyValue < req.body.amount) {
     res.status(400);
     throw new Error("Not enough money");
   }
 
-  return baseCurrencyValue - req.body.amount;
+  return baseCurrencyValue;
 });
 
 const getTargetCurrencyValue = asyncHandler(async (req, res) => {
@@ -61,7 +60,7 @@ const getTargetCurrencyValue = asyncHandler(async (req, res) => {
     throw new Error("Money object was not found");
   }
 
-  return moneyObject[0][req.body.to];
+  return moneyObject[0][req.body.target];
 });
 
 const convertCurrencies = asyncHandler(async (req, res) => {
@@ -72,16 +71,12 @@ const convertCurrencies = asyncHandler(async (req, res) => {
     throw new Error("Money object was not found");
   }
 
-  const targetCurrencyKey = Object.keys(Money.schema.tree).filter(function (
-    toKey
-  ) {
-    return toKey === req.body.to;
+  const baseCurrencyKey = Object.keys(Money.schema.tree).filter(function (baseKey) {
+    return baseKey === req.body.base;
   });
 
-  const baseCurrencyKey = Object.keys(Money.schema.tree).filter(function (
-    fromKey
-  ) {
-    return fromKey === req.body.from;
+  const targetCurrencyKey = Object.keys(Money.schema.tree).filter(function (targetKey) {
+    return targetKey === req.body.target;
   });
 
   const apiPath = `https://api.getgeoapi.com/v2/currency/convert?api_key=${process.env.CURRENCY_API_KEY}&from=${baseCurrencyKey}&to=${targetCurrencyKey}&amount=${req.body.amount}&format=json`;
@@ -93,7 +88,7 @@ const convertCurrencies = asyncHandler(async (req, res) => {
       .rate_for_amount;
   } catch (err) {
     res.status(400);
-    throw new Error("Connection to currency data server failed");
+    throw new Error(err);
   }
 });
 

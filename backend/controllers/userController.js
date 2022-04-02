@@ -32,6 +32,8 @@ const registerUser = asyncHandler(async (req, res) => {
     user: user,
     eur: 100,
     usd: 0,
+    gbp: 0,
+    aud: 0,
     hrk: 0,
   });
 
@@ -42,6 +44,8 @@ const registerUser = asyncHandler(async (req, res) => {
       email: user.email,
       eur: money.eur,
       usd: money.usd,
+      gbp: money.gbp,
+      aud: money.aud,
       hrk: money.hrk,
       token: generateToken(user._id),
     });
@@ -57,10 +61,22 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
+    const money = await Money.findOne({ user: user.id });
+
+    if(!money) {
+      res.status(400);
+      throw new Error("Money data not found");
+    }
+
     res.status(201).json({
       _id: user.id,
       name: user.name,
       email: user.email,
+      eur: money.eur,
+      usd: money.usd,
+      gbp: money.gbp,
+      aud: money.aud,
+      hrk: money.hrk,
       token: generateToken(user._id),
     });
   } else {
@@ -70,7 +86,23 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const getUserData = asyncHandler(async (req, res) => {
-  res.status(200).json(req.user);
+  const money = await Money.findOne({ user: req.user.id });
+
+  if(!money) {
+    res.status(400);
+    throw new Error("Money data not found");
+  }
+
+  res.status(200).json({
+    _id: req.user.id,
+    name: req.user.name,
+    email: req.user.email,
+    eur: money.eur,
+    usd: money.usd,
+    gbp: money.gbp,
+    aud: money.aud,
+    hrk: money.hrk,
+  });
 });
 
 const generateToken = (id) => {

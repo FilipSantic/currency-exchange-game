@@ -13,7 +13,7 @@ const createTransaction = asyncHandler(async (req, res) => {
     throw new Error("Please add an amount to trade");
   }
 
-  if (req.body.from === req.body.to) {
+  if (req.body.base === req.body.target) {
     res.status(400);
     throw new Error("Please select different currencies to trade");
   }
@@ -23,8 +23,8 @@ const createTransaction = asyncHandler(async (req, res) => {
   const transaction = await Transactions.create({
     user: req.user.id,
     amount: req.body.amount,
-    from: req.body.from,
-    to: req.body.to,
+    base: req.body.base,
+    target: req.body.target,
   });
 
   res.status(200).json(transaction);

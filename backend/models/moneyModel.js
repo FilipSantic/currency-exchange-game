@@ -15,6 +15,14 @@ const moneySchema = mongoose.Schema(
       type: Number,
       min: 0,
     },
+    gbp: {
+      type: Number,
+      min: 0,
+    },
+    aud: {
+      type: Number,
+      min: 0,
+    },
     hrk: {
       type: Number,
       min: 0,

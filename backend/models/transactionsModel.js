@@ -12,15 +12,15 @@ const transactionsSchema = mongoose.Schema(
       required: [true, "Please insert an amount of money you want to trade"],
       min: 1,
     },
-    from: {
+    base: {
       type: String,
-      enum: ["eur", "usd", "hrk"],
-      required: [true, "Please select currency from which to trade"],
+      enum: ["eur", "usd", "gbp", "aud", "hrk"],
+      required: [true, "Please select base currency"],
     },
-    to: {
+    target: {
       type: String,
-      enum: ["eur", "usd", "hrk"],
-      required: [true, "Please select currency in which to trade"],
+      enum: ["eur", "usd", "gbp", "aud", "hrk"],
+      required: [true, "Please select target currency"],
     },
   },
   {
