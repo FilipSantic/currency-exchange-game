@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Transactions = require("../models/transactionsModel");
-const Money = require("../models/moneyModel");
+const { getMoney, updateMoney } = require("../controllers/moneyController");
 
 const getTransactions = asyncHandler(async (req, res) => {
   const transactions = await Transactions.find({ user: req.user.id });
@@ -8,7 +8,7 @@ const getTransactions = asyncHandler(async (req, res) => {
 });
 
 const createTransaction = asyncHandler(async (req, res) => {
-  if (!req.body.amount || req.body.amount < 0) {
+  if (!req.body.amount || req.body.amount < 1) {
     res.status(400);
     throw new Error("Please add an amount to trade");
   }
@@ -18,12 +18,7 @@ const createTransaction = asyncHandler(async (req, res) => {
     throw new Error("Please select different currencies to trade");
   }
 
-  const money = await Money.findById(req.user.id);
-
-  if (money[req.body.from] < 1) {
-    res.status(400);
-    throw new Error("Not enough money");
-  }
+  await updateMoney(req, res);
 
   const transaction = await Transactions.create({
     user: req.user.id,

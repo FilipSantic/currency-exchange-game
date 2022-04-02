@@ -30,7 +30,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const money = await Money.create({
     user: user,
-    eur: 0,
+    eur: 100,
     usd: 0,
     hrk: 0,
   })
