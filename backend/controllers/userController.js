@@ -63,7 +63,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (user && (await bcrypt.compare(password, user.password))) {
     const money = await Money.findOne({ user: user.id });
 
-    if(!money) {
+    if (!money) {
       res.status(400);
       throw new Error("Money data not found");
     }
@@ -88,7 +88,7 @@ const loginUser = asyncHandler(async (req, res) => {
 const getUserData = asyncHandler(async (req, res) => {
   const money = await Money.findOne({ user: req.user.id });
 
-  if(!money) {
+  if (!money) {
     res.status(400);
     throw new Error("Money data not found");
   }
