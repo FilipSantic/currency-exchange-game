@@ -52,7 +52,7 @@ function Dashboard() {
 
       <section className='content'>
         {transactions.length > 0 ? (
-          <div className='goals'>
+          <div className='transactions'>
             {transactions.map((transaction) => (
               <TransactionItem key={transaction._id} transaction={transaction} />
             ))}
