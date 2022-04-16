@@ -102,6 +102,7 @@ const getUserData = asyncHandler(async (req, res) => {
     gbp: money.gbp,
     aud: money.aud,
     hrk: money.hrk,
+    token: generateToken(req.user.id),
   });
 });
 

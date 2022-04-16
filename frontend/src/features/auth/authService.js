@@ -26,10 +26,27 @@ const logout = () => {
   localStorage.removeItem("user");
 };
 
+const getData = async (token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await axios.get(API_URL + "dashboard", config);
+
+  if (response.data) {
+    localStorage.setItem("user", JSON.stringify(response.data));
+  }
+
+  return response.data;
+};
+
 const authService = {
   register,
   login,
   logout,
+  getData,
 };
 
 export default authService;
